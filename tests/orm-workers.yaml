@@ -1,0 +1,28 @@
+# ORM + Workers (no web, no cli)
+
+default_context:
+  project_name: "ORM Workers Project"
+  project_description: "ORM with workers."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "y"
+  include_cli: "n"
+  include_workers: "y"
+  include_docker: "n"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "cmd/worker/main.go"
+  - "internal/service/item.go"
+  - "internal/worker/pool.go"
+
+excluded_files:
+  - "internal/handler"
+  - "internal/cli"
+  - "internal/middleware"
+  - "Dockerfile"

@@ -1,0 +1,24 @@
+{
+    "project_name": "My Go Project",
+    "project_slug": "{{ cookiecutter.project_name | lower | replace(' ', '_') | replace('-', '_') | replace('.', '_') }}",
+    "project_description": "A Go project generated from Rob's Awesome Go Template",
+    "author_name": "Your Name",
+    "author_email": "you@example.com",
+    "github_org": "myorg",
+    "import_path": "github.com/{{ cookiecutter.github_org }}/{{ cookiecutter.project_slug }}",
+    "go_version": "1.27",
+    "license": [
+        "MIT",
+        "Apache-2.0",
+        "BSD-3-Clause",
+        "GPL-3.0",
+        "All Rights Reserved",
+        "None"
+    ],
+    "include_web": "y",
+    "include_orm": "y",
+    "include_cli": "y",
+    "include_workers": "n",
+    "include_docker": "y",
+    "include_ai": "y"
+}

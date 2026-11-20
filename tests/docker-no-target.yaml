@@ -1,0 +1,34 @@
+# Docker with no useful target (no web, no cli, no workers)
+# Docker files should be removed by post_gen
+
+default_context:
+  project_name: "Docker No Target"
+  project_description: "Docker with no target."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "n"
+  include_cli: "n"
+  include_workers: "n"
+  include_docker: "y"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "justfile"
+
+excluded_files:
+  - "Dockerfile"
+  - "docker-compose.yaml"
+  - ".dockerignore"
+  - "cmd"
+  - "internal/handler"
+  - "internal/service"
+  - "internal/model"
+  - "internal/cli"
+  - "internal/worker"
+  - "internal/middleware"
+  - "migrations"

@@ -1,0 +1,14 @@
+bin/
+*.exe
+*.test
+*.out
+vendor/
+.git
+.gitignore
+.env
+.DS_Store
+*.md
+docs/
+test/
+scripts/
+.github/

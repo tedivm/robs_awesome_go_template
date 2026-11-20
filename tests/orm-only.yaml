@@ -1,0 +1,30 @@
+# ORM only (no web)
+
+default_context:
+  project_name: "ORM Project"
+  project_description: "ORM without web."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "y"
+  include_cli: "n"
+  include_workers: "n"
+  include_docker: "n"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "internal/service/item.go"
+  - "internal/model/base.go"
+  - "migrations/pg/001_init.sql"
+
+excluded_files:
+  - "cmd"
+  - "internal/handler"
+  - "internal/cli"
+  - "internal/worker"
+  - "internal/middleware"
+  - "Dockerfile"

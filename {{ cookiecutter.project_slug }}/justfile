@@ -1,0 +1,165 @@
+# Rob's Awesome Go Template
+# Run 'just' to see available tasks
+
+set dotenv := true
+
+# Build-time version info (override via environment)
+VERSION := env.get("VERSION", "0.0.0-dev")
+COMMIT := env.get("COMMIT", "unknown")
+DATE := env.get("DATE", "unknown")
+
+# ---- Setup ----
+
+install:
+	'@echo "Installing dependencies..."'
+	go mod download
+	'@echo "Installing tools..."'
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+{% if cookiecutter.include_orm == "y" %}
+	go install github.com/pressly/goose/v3/cmd/goose@latest
+{% endif %}
+	go install gotest.tools/gotestsum@latest
+	'@echo "Setup complete."'
+
+{% if cookiecutter.include_web == "y" or cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %}
+# ---- Build ----
+
+{% if cookiecutter.include_web == "y" %}
+build:
+	go build -ldflags="-s -w -X {{ cookiecutter.import_path }}/internal/version.Version=$(VERSION) -X {{ cookiecutter.import_path }}/internal/version.Commit=$(COMMIT) -X {{ cookiecutter.import_path }}/internal/version.Date=$(DATE)" -o bin/{{ cookiecutter.project_slug }} ./cmd/{{ cookiecutter.project_slug }}
+{% endif %}
+
+{% if cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %}
+build-cli:
+	go build -ldflags="-s -w -X {{ cookiecutter.import_path }}/internal/version.Version=$(VERSION) -X {{ cookiecutter.import_path }}/internal/version.Commit=$(COMMIT) -X {{ cookiecutter.import_path }}/internal/version.Date=$(DATE)" -o bin/cli ./cmd/cli
+{% endif %}
+{% endif %}
+
+{% if cookiecutter.include_web == "y" or cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" or cookiecutter.include_workers == "y" %}
+# ---- Run ----
+
+{% if cookiecutter.include_web == "y" %}
+dev:
+	'@echo "Starting hot reload with air..."'
+	go run github.com/cosmtrek/air@latest
+
+run:
+	go run ./cmd/{{ cookiecutter.project_slug }}
+{% endif %}
+
+{% if cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %}
+run-cli:
+	go run ./cmd/cli
+{% endif %}
+
+{% if cookiecutter.include_workers == "y" %}
+run-workers:
+	go run ./cmd/worker
+{% endif %}
+{% endif %}
+
+# ---- Test ----
+
+test:
+	go test -race -count=1 ./...
+
+test-verbose:
+	go test -v -race -count=1 ./...
+
+test-coverage:
+	go test -race -count=1 -coverprofile=coverage.out ./...
+	go tool cover -func=coverage.out
+
+{% if cookiecutter.include_orm == "y" and cookiecutter.include_docker == "y" %}
+# Test against PostgreSQL (requires docker compose)
+test-postgres:
+	'@echo "Starting PostgreSQL..."'
+	docker compose up -d db
+	@sleep 3
+	'@echo "Running tests against PostgreSQL..."'
+	APP_DATABASE_DRIVER=postgres \
+	APP_DATABASE_DSN="host=localhost user=postgres password=postgres dbname=app port=5432 sslmode=disable" \
+	go test -race -count=1 ./test/service/...{% if cookiecutter.include_web == "y" %} ./test/handler/...{% endif %}
+	docker compose down
+{% endif %}
+
+# ---- Lint ----
+
+lint:
+	golangci-lint run ./...
+
+lint-check:
+	golangci-lint run --new-only --max-issues-per-linter=0 --max-same-issues=0 ./...
+
+# ---- Format ----
+
+fmt:
+	gofmt -w -s .
+
+fmt-check:
+	test -z $(gofmt -l -s .)
+
+vet:
+	go vet ./...
+
+{% if cookiecutter.include_orm == "y" %}
+# ---- Migrations ----
+
+{% if cookiecutter.include_cli == "y" %}
+migrate-plan:
+	go run ./cmd/cli migrate status
+
+migrate-apply:
+	go run ./cmd/cli migrate up
+
+migrate-create name:
+	goose -dir migrations/pg create {% raw %}{{name}}{% endraw %} sql
+	goose -dir migrations/sqlite create {% raw %}{{name}}{% endraw %} sql
+{% else %}
+migrate-plan:
+	goose -dir migrations status
+
+migrate-apply:
+	goose -dir migrations up
+
+migrate-create name:
+	goose -dir migrations create {% raw %}{{name}}{% endraw %} sql
+{% endif %}
+{% endif %}
+
+{% if cookiecutter.include_docker == "y" %}
+# ---- Docker ----
+docker-build:{% if cookiecutter.include_web == "y" %}
+	docker build --target web-build -t {{ cookiecutter.project_slug }}:web .{% endif %}{% if cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %}
+	docker build --target cli-build -t {{ cookiecutter.project_slug }}:cli .{% endif %}{% if cookiecutter.include_workers == "y" %}
+	docker build --target worker-build -t {{ cookiecutter.project_slug }}:worker .{% endif %}
+
+{% if cookiecutter.include_web == "y" %}docker-build-web:
+	docker build --target web-build -t {{ cookiecutter.project_slug }}:web .
+{% endif %}{% if cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %}
+docker-build-cli:
+	docker build --target cli-build -t {{ cookiecutter.project_slug }}:cli .
+{% endif %}{% if cookiecutter.include_workers == "y" %}
+docker-build-worker:
+	docker build --target worker-build -t {{ cookiecutter.project_slug }}:worker .
+{% endif %}
+docker-up:
+	docker compose up -d
+
+docker-down:
+	docker compose down
+{% if cookiecutter.include_web == "y" or cookiecutter.include_workers == "y" %}
+
+docker-up-prod:
+	docker compose -f docker-compose.prod.yaml up -d --build
+{% endif %}{% endif %}
+# ---- Security ----
+
+vuln-check:
+	govulncheck ./...
+
+# ---- Chores ----
+
+chores: fmt lint vet
+
+all: install{% if cookiecutter.include_web == "y" %} build{% endif %}{% if cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %} build-cli{% endif %} test lint

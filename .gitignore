@@ -1,0 +1,6 @@
+# Generated projects
+tmp/
+smoke_test/
+
+# OS
+.DS_Store

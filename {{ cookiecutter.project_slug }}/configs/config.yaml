@@ -1,0 +1,46 @@
+{% if cookiecutter.include_web == "y" %}
+server:
+  port: 8080
+  environment: development
+  read_timeout: 30
+  write_timeout: 30
+  rate_limit: 100
+
+{% endif %}
+{% if cookiecutter.include_orm == "y" %}
+database:
+  driver: sqlite
+  dsn: app.db
+  max_open_conns: 25
+  max_idle_conns: 5
+  conn_max_lifetime: 3600
+
+{% endif %}
+{% if cookiecutter.include_workers == "y" %}
+redis:
+  addr: localhost:6379
+  db: 0
+
+{% endif %}
+log:
+  level: debug
+  format: json
+
+{% if cookiecutter.include_web == "y" %}
+auth:
+  auth_method: api_key
+  jwt_secret: ""
+  api_key: ""
+
+cors:
+  allowed_origins: []
+  allowed_methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed_headers:
+    - Content-Type
+    - Authorization
+{% endif %}

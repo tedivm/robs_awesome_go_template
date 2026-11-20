@@ -1,0 +1,39 @@
+name: Security
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  govulncheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: '.go-version'
+      - uses: golang/govulncheck-action@v1
+        with:
+          package: ./...
+
+{% if cookiecutter.include_docker == "y" %}
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build image
+{% raw %}
+        run: docker build -t ${{ github.repository }}:latest .
+{% endraw %}
+      - uses: aquasecurity/trivy-action@v0.36.0
+        with:
+{% raw %}
+          image-ref: ${{ github.repository }}:latest
+{% endraw %}
+          format: table
+          exit-code: 1
+          severity: CRITICAL,HIGH
+{% endif %}

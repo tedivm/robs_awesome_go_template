@@ -1,0 +1,28 @@
+# Docker + CLI + ORM (no web)
+
+default_context:
+  project_name: "Docker CLI Project"
+  project_description: "Docker with CLI and ORM."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "y"
+  include_cli: "y"
+  include_workers: "n"
+  include_docker: "y"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "Dockerfile"
+  - "docker-compose.yaml"
+  - "cmd/cli/main.go"
+
+excluded_files:
+  - "docker-compose.prod.yaml"
+  - "internal/handler"
+  - "internal/worker"
+  - "internal/middleware"

@@ -1,0 +1,28 @@
+# Web + ORM + CLI
+
+default_context:
+  project_name: "Web ORM CLI Project"
+  project_description: "Web with ORM and CLI."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "y"
+  include_orm: "y"
+  include_cli: "y"
+  include_workers: "n"
+  include_docker: "n"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "cmd/web_orm_cli_project/main.go"
+  - "cmd/cli/main.go"
+  - "internal/handler/items.go"
+  - "internal/service/item.go"
+  - "internal/cli/migrate.go"
+
+excluded_files:
+  - "internal/worker"
+  - "Dockerfile"

@@ -1,0 +1,36 @@
+# Full — all features enabled
+
+default_context:
+  project_name: "Full Go Project"
+  project_description: "A full-featured Go project."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "y"
+  include_orm: "y"
+  include_cli: "y"
+  include_workers: "y"
+  include_docker: "y"
+  include_ai: "y"
+
+required_files:
+  - "go.mod"
+  - "justfile"
+  - "Dockerfile"
+  - "docker-compose.yaml"
+  - "cmd/full_go_project/main.go"
+  - "cmd/cli/main.go"
+  - "internal/config/config.go"
+  - "internal/handler/items.go"
+  - "internal/handler/health.go"
+  - "internal/middleware/auth.go"
+  - "internal/model/base.go"
+  - "internal/service/item.go"
+  - "internal/worker/pool.go"
+  - "internal/version/version.go"
+  - "migrations/pg/001_init.sql"
+  - "AGENTS.md"
+
+excluded_files: []

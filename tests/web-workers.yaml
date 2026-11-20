@@ -1,0 +1,27 @@
+# Web + Workers (no ORM)
+
+default_context:
+  project_name: "Web Workers Project"
+  project_description: "Web with workers but no ORM."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "y"
+  include_orm: "n"
+  include_cli: "n"
+  include_workers: "y"
+  include_docker: "n"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "cmd/web_workers_project/main.go"
+  - "internal/worker/pool.go"
+
+excluded_files:
+  - "internal/service"
+  - "internal/model"
+  - "internal/cli"
+  - "migrations"

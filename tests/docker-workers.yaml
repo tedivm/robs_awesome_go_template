@@ -1,0 +1,32 @@
+# Docker + Workers only (no web, no orm, no cli)
+
+default_context:
+  project_name: "Docker Workers Project"
+  project_description: "Docker with workers only."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "n"
+  include_cli: "n"
+  include_workers: "y"
+  include_docker: "y"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "Dockerfile"
+  - "docker-compose.yaml"
+  - "docker-compose.prod.yaml"
+  - "cmd/worker/main.go"
+  - "internal/worker/pool.go"
+
+excluded_files:
+  - "internal/handler"
+  - "internal/service"
+  - "internal/model"
+  - "internal/cli"
+  - "internal/middleware"
+  - "migrations"

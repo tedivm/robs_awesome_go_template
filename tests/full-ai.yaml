@@ -1,0 +1,28 @@
+# Web + ORM + CLI + Workers + Docker + AI (full)
+# Same as full but with explicit AI enabled
+
+default_context:
+  project_name: "Full AI Project"
+  project_description: "Full project with AI."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "y"
+  include_orm: "y"
+  include_cli: "y"
+  include_workers: "y"
+  include_docker: "y"
+  include_ai: "y"
+
+required_files:
+  - "go.mod"
+  - "Dockerfile"
+  - "docker-compose.yaml"
+  - "AGENTS.md"
+  - ".agents/skills/adding-api-endpoints/SKILL.md"
+  - "cmd/full_ai_project/main.go"
+  - "cmd/cli/main.go"
+
+excluded_files: []

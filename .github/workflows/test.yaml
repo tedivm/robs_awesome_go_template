@@ -1,0 +1,62 @@
+name: Template Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+
+      - name: Validate cookiecutter.json
+        run: uv run python -c "import json; json.load(open('cookiecutter.json'))"
+
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - bare
+          - library
+          - no-license
+          - web-orm
+          - web-orm-cli
+          - web-orm-docker
+          - web-orm-workers-docker
+          - web-docker
+          - web-workers
+          - orm-only
+          - orm-cli
+          - orm-workers
+          - docker-cli
+          - docker-workers
+          - docker-no-target
+          - full
+          - full-ai
+    name: Test — ${{ matrix.config }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: '.go-version'
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+
+      - name: Run template test
+        run: go run tests/test_template.go ${{ matrix.config }}

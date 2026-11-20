@@ -1,0 +1,65 @@
+services:
+  app:
+    # target: builder — uses Go compiler image (~800MB) for dev with hot reload.
+    # For production, remove "target: builder" to use the distroless runtime (~50MB).
+    build:
+      context: .
+      target: builder
+{% if cookiecutter.include_web == "y" %}
+    ports:
+      - "8080:8080"
+{% endif %}
+    environment:
+      - APP_SERVER_ENVIRONMENT=development
+      - APP_LOG_LEVEL=debug
+{% if cookiecutter.include_orm == "y" %}
+      - APP_DATABASE_DRIVER=postgres
+      - APP_DATABASE_DSN=host=db user=postgres password=${DEV_DB_PASSWORD:-postgres} dbname=app port=5432 sslmode=disable
+{% endif %}
+      - STATIC_PATH=/src/static
+    volumes:
+      - .:/src
+    working_dir: /src
+{% if cookiecutter.include_orm == "y" and cookiecutter.include_cli == "y" %}
+    command: sh -c "until pg_isready -h db -p 5432 -U postgres; do sleep 1; done && go run ./cmd/cli migrate up && go run ./cmd/{{ cookiecutter.project_slug }}"
+    depends_on:
+      db:
+        condition: service_healthy
+{% elif cookiecutter.include_orm == "y" %}
+    command: sh -c "until pg_isready -h db -p 5432 -U postgres; do sleep 1; done && go run ./cmd/{{ cookiecutter.project_slug }}"
+    depends_on:
+      db:
+        condition: service_healthy
+{% elif cookiecutter.include_web == "y" %}
+    command: go run ./cmd/{{ cookiecutter.project_slug }}
+{% elif cookiecutter.include_cli == "y" and cookiecutter.include_orm == "y" %}
+    command: go run ./cmd/cli
+{% endif %}
+
+{% if cookiecutter.include_orm == "y" %}
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD:-postgres}
+      POSTGRES_DB: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+{% endif %}{% if cookiecutter.include_workers == "y" %}
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+{% endif %}volumes:
+{% if cookiecutter.include_orm == "y" %}
+  pgdata:
+{% endif %}

@@ -1,0 +1,17 @@
+name: License Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: '.go-version'
+      - run: go install github.com/google/go-licenses@latest
+      - run: go-licenses check --disallowed_types=forbidden ./...

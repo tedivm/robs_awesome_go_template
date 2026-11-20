@@ -1,0 +1,44 @@
+{% raw %}name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-postgres:
+    name: Test against PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: '.go-version'
+
+      - name: Download dependencies
+        run: go mod download
+
+{% endraw %}
+      - name: Run tests against PostgreSQL
+        env:
+          APP_DATABASE_DRIVER: postgres
+          APP_DATABASE_DSN: postgres://postgres:postgres@localhost:5432/app?sslmode=disable
+        run: go test -race -count=1 ./test/service/...{% if cookiecutter.include_web == "y" %} ./test/handler/...{% endif %}

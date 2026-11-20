@@ -1,0 +1,28 @@
+# ORM + CLI (no web)
+
+default_context:
+  project_name: "ORM CLI Project"
+  project_description: "ORM with CLI, no web."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "y"
+  include_cli: "y"
+  include_workers: "n"
+  include_docker: "n"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "cmd/cli/main.go"
+  - "internal/cli/migrate.go"
+  - "internal/service/item.go"
+
+excluded_files:
+  - "internal/handler"
+  - "internal/worker"
+  - "internal/middleware"
+  - "Dockerfile"

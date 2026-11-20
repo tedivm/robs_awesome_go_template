@@ -1,0 +1,34 @@
+# Library — no web, no cli, no docker (just config + version)
+
+default_context:
+  project_name: "Library Project"
+  project_description: "A Go library project."
+  author_name: "Test Author"
+  author_email: "test@example.com"
+  github_org: "testorg"
+  go_version: "1.23"
+  license: "MIT"
+  include_web: "n"
+  include_orm: "n"
+  include_cli: "n"
+  include_workers: "n"
+  include_docker: "n"
+  include_ai: "n"
+
+required_files:
+  - "go.mod"
+  - "justfile"
+  - "internal/config/config.go"
+  - "internal/version/version.go"
+
+excluded_files:
+  - "Dockerfile"
+  - "docker-compose.yaml"
+  - "cmd"
+  - "internal/handler"
+  - "internal/service"
+  - "internal/model"
+  - "internal/cli"
+  - "internal/worker"
+  - "internal/middleware"
+  - "migrations"
