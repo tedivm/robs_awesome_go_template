@@ -3,9 +3,8 @@ updates:
   # Don't scan the template directory — its go.mod contains
   # cookiecutter variables and is not a valid Go module.
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/{{ cookiecutter.project_slug }}"
     schedule:
       interval: "weekly"
     ignore:
       - dependency-name: "*"
-        update-types: ["version:update:semver"]
